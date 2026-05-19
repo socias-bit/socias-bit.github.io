@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora · Estrelas da Experiência · Onze em Ponto</title>
+<link href="https://fonts.googleapis.com/css2?family=Mulish:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --amarelo:   #FFCA01;
+  --verde:     #97B62D;
+  --vermelho:  #F04848;
+  --cinza-esc: #545454;
+  --cinza-cla: #F2F2F2;
+  --branco:    #FFFFFF;
+  --texto:     #545454;
+  --borda:     #E0E0E0;
+}
+
+body {
+  font-family: 'Mulish', sans-serif;
+  font-size: 13px;
+  background: var(--cinza-cla);
+  color: var(--texto);
+  min-height: 100vh;
+}
+
+/* ── HEADER ─────────────────────────────────── */
+.header {
+  background: var(--cinza-esc);
+  padding: 0;
+  display: flex;
+  align-items: stretch;
+}
+.header-accent {
+  width: 8px;
+  background: var(--amarelo);
+  flex-shrink: 0;
+}
+.header-content {
+  padding: 18px 28px;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.h-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.h-eyebrow {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--amarelo);
+}
+.h-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--branco);
+  line-height: 1.1;
+}
+.h-sub {
+  font-size: 11px;
+  font-weight: 300;
+  color: rgba(255,255,255,.45);
+  margin-top: 1px;
+}
+
+/* TOGGLE PARCEIRO */
+.parceiro-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255,255,255,.07);
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 6px;
+  padding: 9px 14px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.parceiro-label { font-size: 12px; font-weight: 600; color: rgba(255,255,255,.55); white-space: nowrap; }
+.parceiro-badge {
+  font-size: 10px; font-weight: 800; padding: 2px 9px;
+  border-radius: 3px; background: var(--amarelo); color: var(--cinza-esc);
+  display: none; white-space: nowrap; letter-spacing: .04em;
+}
+.parceiro-badge.on { display: inline-block; }
+.toggle { position: relative; width: 36px; height: 20px; flex-shrink: 0; }
+.toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
+.sl {
+  position: absolute; inset: 0;
+  background: rgba(255,255,255,.2); border-radius: 20px; transition: .18s; cursor: pointer;
+}
+.sl::before {
+  content: ''; position: absolute;
+  width: 14px; height: 14px; left: 3px; bottom: 3px;
+  background: white; border-radius: 50%; transition: .18s;
+}
+input:checked + .sl { background: var(--amarelo); }
+input:checked + .sl::before { transform: translateX(16px); background: var(--cinza-esc); }
+
+/* ── LAYOUT ──────────────────────────────────── */
+.main { display: grid; grid-template-columns: 310px 1fr; min-height: calc(100vh - 80px); }
+
+/* ── PAINEL ESQUERDO ─────────────────────────── */
+.left { background: var(--branco); border-right: 1px solid var(--borda); overflow-y: auto; }
+.panel-hd {
+  font-size: 9px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--cinza-esc); padding: 12px 18px; border-bottom: 1px solid var(--borda);
+  background: var(--cinza-cla); position: sticky; top: 0; z-index: 2;
+}
+.left-body { padding: 16px 18px 32px; }
+
+.sec {
+  margin-bottom: 20px;
+  padding-left: 12px;
+  border-left: 4px solid var(--verde);
+}
+.sec.alert { border-left-color: var(--vermelho); }
+.sec-title {
+  font-size: 12px; font-weight: 800; color: var(--cinza-esc); margin-bottom: 8px;
+  display: flex; align-items: center; gap: 7px;
+}
+.sec-num {
+  width: 20px; height: 20px; border-radius: 50%;
+  background: var(--verde); color: var(--branco);
+  font-size: 9px; font-weight: 800;
+  display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+
+.subsec { margin-top: 10px; margin-bottom: 2px; }
+.subsec-label {
+  font-size: 9px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase;
+  color: rgba(84,84,84,.5); margin-bottom: 6px; padding-bottom: 4px;
+  border-bottom: 1px solid var(--borda);
+}
+
+/* Pills */
+.pills { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 4px; }
+.pill {
+  border: 1px solid var(--borda); border-radius: 4px; padding: 5px 11px;
+  font-size: 12px; font-family: 'Mulish', sans-serif; font-weight: 600;
+  cursor: pointer; background: var(--cinza-cla); color: rgba(84,84,84,.7);
+  transition: all .12s; user-select: none;
+}
+.pill:hover { border-color: var(--verde); color: var(--cinza-esc); }
+.pill.on { background: var(--cinza-esc); border-color: var(--cinza-esc); color: var(--amarelo); font-weight: 700; }
+
+/* Input rows */
+.row {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 7px; flex-wrap: wrap;
+}
+.row label { font-size: 11.5px; font-weight: 400; color: rgba(84,84,84,.8); flex: 1; min-width: 120px; }
+.row input[type=number] {
+  width: 76px; padding: 5px 8px;
+  border: 1px solid var(--borda); border-radius: 4px;
+  font-size: 12px; font-family: 'Mulish', sans-serif; font-weight: 600;
+  background: var(--cinza-cla); color: var(--cinza-esc); outline: none;
+  transition: border .12s;
+}
+.row input:focus { border-color: var(--verde); background: white; }
+.row .hint { font-size: 10px; font-weight: 600; color: rgba(84,84,84,.45); white-space: nowrap; }
+
+/* Checkbox */
+.ck-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; cursor: pointer; }
+.ck-row input[type=checkbox] { accent-color: var(--verde); width: 14px; height: 14px; cursor: pointer; flex-shrink: 0; }
+.ck-row label { font-size: 12px; font-weight: 400; color: var(--cinza-esc); cursor: pointer; flex: 1; }
+.ck-row .val { font-size: 11px; font-weight: 700; color: var(--verde); }
+
+/* ── PAINEL DIREITO ──────────────────────────── */
+.right { background: var(--cinza-cla); overflow-y: auto; }
+.right-hd {
+  font-size: 9px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--cinza-esc); padding: 12px 24px; border-bottom: 1px solid var(--borda);
+  background: var(--cinza-cla); position: sticky; top: 0; z-index: 2;
+}
+.right-body { padding: 16px 24px 32px; }
+
+/* Grid de planos */
+.plans { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 14px; margin-bottom: 20px; }
+
+.pcard {
+  background: var(--branco);
+  border: 1px solid var(--borda);
+  border-top: 4px solid var(--verde);
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,.04);
+  transition: box-shadow .2s;
+}
+.pcard:hover { box-shadow: 0 4px 16px rgba(0,0,0,.08); }
+.pcard.best {
+  border-top: 4px solid var(--amarelo);
+  box-shadow: 0 2px 12px rgba(0,0,0,.10);
+}
+.pcard.p3 { border-top-color: var(--verde); }
+
+/* Cabeçalho card */
+.pcard-hd { padding: 14px 16px 12px; background: var(--branco); }
+.pc-eye {
+  font-size: 9px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--verde); margin-bottom: 3px; display: flex; align-items: center; gap: 6px;
+}
+.pcard.best .pc-eye { color: var(--cinza-esc); }
+.pop {
+  font-size: 9px; font-weight: 800; padding: 2px 7px; border-radius: 3px;
+  background: var(--amarelo); color: var(--cinza-esc); letter-spacing: .03em;
+}
+.pc-nome { font-size: 16px; font-weight: 800; color: var(--cinza-esc); line-height: 1.1; }
+.pc-dur  { font-size: 10px; font-weight: 300; color: rgba(84,84,84,.5); margin-top: 3px; }
+
+/* Descrição do plano */
+.pc-desc {
+  background: var(--cinza-cla);
+  border-top: 1px solid var(--borda);
+  border-bottom: 1px solid var(--borda);
+  padding: 8px 16px;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 3px 8px;
+}
+.pc-desc-item { font-size: 10px; font-weight: 400; color: rgba(84,84,84,.65); }
+.pc-desc-item strong { color: var(--cinza-esc); font-weight: 700; }
+
+/* Body */
+.pc-body { padding: 12px 16px 10px; }
+.ptable { width: 100%; border-collapse: collapse; font-size: 11.5px; }
+.ptable tr td { padding: 4px 0; border-bottom: 1px solid var(--cinza-cla); }
+.ptable tr:last-child td { border-bottom: none; }
+.ptable td:first-child { font-weight: 400; color: rgba(84,84,84,.7); }
+.ptable td:last-child { font-weight: 700; color: var(--cinza-esc); text-align: right; }
+.ptable tr.enc td { font-size: 10.5px; color: rgba(84,84,84,.5); }
+.ptable tr.enc td:last-child { font-weight: 600; color: rgba(84,84,84,.6); }
+
+/* Itens inclusos */
+.inc { margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--cinza-cla); }
+.inc-item { display: flex; align-items: center; gap: 6px; font-size: 10.5px; font-weight: 400; color: rgba(84,84,84,.65); padding: 2px 0; }
+.inc-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--verde); flex-shrink: 0; }
+.pcard.best .inc-dot { background: var(--amarelo); }
+
+/* Footer card */
+.pc-foot {
+  background: var(--cinza-esc);
+  padding: 12px 16px;
+  margin-top: 2px;
+}
+.pc-foot-lbl {
+  font-size: 9px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase;
+  color: rgba(255,255,255,.4); margin-bottom: 3px;
+}
+.pc-total { font-size: 20px; font-weight: 800; color: var(--amarelo); }
+.pc-parc  { font-size: 11px; font-weight: 300; color: rgba(255,255,255,.5); margin-top: 2px; }
+
+/* Nota rodapé */
+.nota {
+  font-size: 11px; font-weight: 300; color: rgba(84,84,84,.6);
+  border-top: 1px solid var(--borda); padding-top: 14px;
+  line-height: 1.6;
+}
+.nota strong { font-weight: 700; color: var(--cinza-esc); }
+
+@media (max-width: 860px) {
+  .main { grid-template-columns: 1fr; }
+  .left { border-right: none; border-bottom: 1px solid var(--borda); }
+  .plans { grid-template-columns: 1fr; }
+  .header-content { flex-direction: column; align-items: flex-start; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-accent"></div>
+  <div class="header-content">
+    <div class="h-brand">
+      <div class="h-eyebrow">Onze em Ponto · Documento Interno</div>
+      <div class="h-title">Calculadora de Orçamento</div>
+      <div class="h-sub">Estrelas da Experiência · Comparativo dos 3 planos</div>
+    </div>
+    <div class="parceiro-wrap" onclick="toggleParceiro()">
+      <span class="parceiro-label">Cliente parceiro?</span>
+      <span class="parceiro-badge" id="p-badge">Parceiro ✓</span>
+      <label class="toggle" onclick="event.stopPropagation()">
+        <input type="checkbox" id="p-chk" onchange="calc()">
+        <span class="sl"></span>
+      </label>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+
+<!-- ═══ ESQUERDA ══════════════════════════════════════════════ -->
+<div class="left">
+  <div class="panel-hd">Configurações do orçamento</div>
+  <div class="left-body">
+
+    <!-- 1. DESLOCAMENTO -->
+    <div class="sec">
+      <div class="sec-title"><span class="sec-num">1</span>Deslocamento</div>
+
+      <div class="subsec">
+        <div class="subsec-label">Passagem aérea</div>
+        <div class="pills" id="passagem-g">
+          <div class="pill on" data-val="nao" onclick="sel(this,'passagem')">Não tem</div>
+          <div class="pill" data-val="sim" onclick="sel(this,'passagem')">Sim, tem</div>
+        </div>
+        <div id="passagem-det" style="display:none">
+          <div class="row">
+            <label>Valor da passagem (ida + volta)</label>
+            <input type="number" id="pass-v" value="600" min="0" step="50" oninput="calc()">
+            <span class="hint">R$</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsec">
+        <div class="subsec-label">Combustível</div>
+        <div class="pills" id="comb-g">
+          <div class="pill on" data-val="nao" onclick="sel(this,'comb')">Não tem</div>
+          <div class="pill" data-val="sim" onclick="sel(this,'comb')">Sim, tem</div>
+        </div>
+        <div id="comb-det" style="display:none">
+          <div class="row">
+            <label>Quilometragem por visita (ida + volta)</label>
+            <input type="number" id="km-v" value="100" min="0" step="10" oninput="calc()">
+            <span class="hint">km × R$ 2,50</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsec">
+        <div class="subsec-label">Estacionamento</div>
+        <div class="pills" id="estac-g">
+          <div class="pill on" data-val="nao" onclick="sel(this,'estac')">Não tem</div>
+          <div class="pill" data-val="sim" onclick="sel(this,'estac')">Sim, tem</div>
+        </div>
+        <div id="estac-det" style="display:none">
+          <div class="row">
+            <label>Valor por visita</label>
+            <input type="number" id="estac-v" value="30" min="0" step="5" oninput="calc()">
+            <span class="hint">R$ / visita</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsec">
+        <div class="subsec-label">Hospedagem (deslocamento)</div>
+        <div class="pills" id="hosp-g">
+          <div class="pill on" data-val="nao" onclick="sel(this,'hosp')">Não tem</div>
+          <div class="pill" data-val="sim" onclick="sel(this,'hosp')">Sim, tem</div>
+        </div>
+        <div id="hosp-det" style="display:none">
+          <div class="row">
+            <label>Valor da diária</label>
+            <input type="number" id="hosp-v" value="300" min="0" step="50" oninput="calc()">
+            <span class="hint">R$ / noite</span>
+          </div>
+          <div class="row">
+            <label>Número de noites</label>
+            <input type="number" id="noites-v" value="1" min="0" oninput="calc()">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. ALIMENTAÇÃO -->
+    <div class="sec">
+      <div class="sec-title"><span class="sec-num">2</span>Alimentação <span style="font-size:10px;font-weight:300;color:rgba(84,84,84,.5)">(por visita)</span></div>
+      <div class="ck-row">
+        <input type="checkbox" id="cafe-chk" onchange="calc()">
+        <label for="cafe-chk">Café da manhã</label>
+        <span class="val">R$ 30</span>
+      </div>
+      <div class="ck-row">
+        <input type="checkbox" id="almoco-chk" onchange="calc()">
+        <label for="almoco-chk">Almoço</label>
+        <span class="val">R$ 50</span>
+      </div>
+      <div class="ck-row">
+        <input type="checkbox" id="janta-chk" onchange="calc()">
+        <label for="janta-chk">Janta</label>
+        <span class="val">R$ 50</span>
+      </div>
+    </div>
+
+    <!-- 3. CLIENTE OCULTO -->
+    <div class="sec">
+      <div class="sec-title"><span class="sec-num">3</span>Cliente Oculto — gastos da experiência</div>
+      <div class="row">
+        <label>Ingressos</label>
+        <input type="number" id="co-ingr" value="0" min="0" step="10" oninput="calc()">
+        <span class="hint">R$</span>
+      </div>
+      <div class="row">
+        <label>Alimentação durante a visita</label>
+        <input type="number" id="co-alim" value="0" min="0" step="10" oninput="calc()">
+        <span class="hint">R$</span>
+      </div>
+      <div class="row">
+        <label>Hospedagem</label>
+        <input type="number" id="co-hosp-n" value="0" min="0" oninput="calc()">
+        <span class="hint">noites</span>
+        <input type="number" id="co-hosp-v" value="300" min="0" step="50" oninput="calc()">
+        <span class="hint">R$/noite</span>
+      </div>
+      <div class="row">
+        <label>Valor extra</label>
+        <input type="number" id="co-extra" value="0" min="0" step="10" oninput="calc()">
+        <span class="hint">R$</span>
+      </div>
+    </div>
+
+    <!-- 4. TREINAMENTOS -->
+    <div class="sec">
+      <div class="sec-title"><span class="sec-num">4</span>Treinamentos e materiais</div>
+      <div class="row">
+        <label>Participantes</label>
+        <input type="number" id="part-v" value="8" min="1" max="200" oninput="calc()">
+        <span class="hint">× R$ 30 (apostila)</span>
+      </div>
+      <div class="row" style="margin-top:6px; align-items:flex-start">
+        <label style="padding-top:5px">Troféu oficial</label>
+        <div class="pills" id="trofeu-g">
+          <div class="pill on" data-val="sim" onclick="sel(this,'trofeu')">Sim — R$ 200</div>
+          <div class="pill" data-val="nao" onclick="sel(this,'trofeu')">Não</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. PAGAMENTO -->
+    <div class="sec">
+      <div class="sec-title"><span class="sec-num">5</span>Pagamento</div>
+      <div class="pills" id="avista-g">
+        <div class="pill" data-val="sim" onclick="sel(this,'avista')">À vista — 5% desconto</div>
+        <div class="pill on" data-val="nao" onclick="sel(this,'avista')">Parcelado</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══ DIREITA ════════════════════════════════════════════════ -->
+<div class="right">
+  <div class="right-hd">Comparativo dos 3 planos · valores calculados automaticamente</div>
+  <div class="right-body">
+
+    <div class="plans">
+
+      <!-- PLANO I -->
+      <div class="pcard">
+        <div class="pcard-hd">
+          <div class="pc-eye">Plano I</div>
+          <div class="pc-nome">1 ciclo completo</div>
+          <div class="pc-dur">3 meses · até 3×</div>
+        </div>
+        <div class="pc-desc">
+          <div class="pc-desc-item"><strong>1</strong> cliente oculto</div>
+          <div class="pc-desc-item"><strong>2</strong> treinamentos</div>
+          <div class="pc-desc-item"><strong>1</strong> benchmarking</div>
+          <div class="pc-desc-item"><strong>18h</strong> trabalhadas</div>
+        </div>
+        <div class="pc-body">
+          <table class="ptable">
+            <tr><td>Horas trabalhadas</td><td id="p1-h">—</td></tr>
+            <tr><td>Deslocamento</td><td id="p1-desl">—</td></tr>
+            <tr><td>Alimentação</td><td id="p1-alim">—</td></tr>
+            <tr><td>Cliente oculto</td><td id="p1-co">—</td></tr>
+            <tr><td>Treinamentos</td><td id="p1-trei">—</td></tr>
+            <tr class="enc"><td>Imposto (10%)</td><td id="p1-imp">—</td></tr>
+            <tr class="enc"><td>Margem (10%)</td><td id="p1-marg">—</td></tr>
+            <tr class="enc"><td>Comissão (8%)</td><td id="p1-com">—</td></tr>
+          </table>
+          <div class="inc">
+            <div class="inc-item"><span class="inc-dot"></span>1 cliente oculto anônimo</div>
+            <div class="inc-item"><span class="inc-dot"></span>2 treinamentos (2h cada)</div>
+            <div class="inc-item"><span class="inc-dot"></span>1 benchmarking guiado</div>
+            <div class="inc-item"><span class="inc-dot"></span>Troféu se atingir 3 estrelas</div>
+          </div>
+        </div>
+        <div class="pc-foot">
+          <div class="pc-foot-lbl">Valor total</div>
+          <div class="pc-total" id="p1-total">—</div>
+          <div class="pc-parc" id="p1-parc"></div>
+        </div>
+      </div>
+
+      <!-- PLANO II -->
+      <div class="pcard best">
+        <div class="pcard-hd">
+          <div class="pc-eye">Plano II <span class="pop">+ popular</span></div>
+          <div class="pc-nome">2 ciclos completos</div>
+          <div class="pc-dur">6 meses · até 6×</div>
+        </div>
+        <div class="pc-desc">
+          <div class="pc-desc-item"><strong>2</strong> clientes ocultos</div>
+          <div class="pc-desc-item"><strong>4</strong> treinamentos</div>
+          <div class="pc-desc-item"><strong>2</strong> benchmarkings</div>
+          <div class="pc-desc-item"><strong>36h</strong> trabalhadas</div>
+        </div>
+        <div class="pc-body">
+          <table class="ptable">
+            <tr><td>Horas trabalhadas</td><td id="p2-h">—</td></tr>
+            <tr><td>Deslocamento</td><td id="p2-desl">—</td></tr>
+            <tr><td>Alimentação</td><td id="p2-alim">—</td></tr>
+            <tr><td>Cliente oculto</td><td id="p2-co">—</td></tr>
+            <tr><td>Treinamentos</td><td id="p2-trei">—</td></tr>
+            <tr class="enc"><td>Imposto (10%)</td><td id="p2-imp">—</td></tr>
+            <tr class="enc"><td>Margem (10%)</td><td id="p2-marg">—</td></tr>
+            <tr class="enc"><td>Comissão (8%)</td><td id="p2-com">—</td></tr>
+          </table>
+          <div class="inc">
+            <div class="inc-item"><span class="inc-dot"></span>2 clientes ocultos anônimos</div>
+            <div class="inc-item"><span class="inc-dot"></span>4 treinamentos (2h cada)</div>
+            <div class="inc-item"><span class="inc-dot"></span>2 benchmarkings guiados</div>
+            <div class="inc-item"><span class="inc-dot"></span>Relatório comparativo</div>
+          </div>
+        </div>
+        <div class="pc-foot">
+          <div class="pc-foot-lbl">Valor total</div>
+          <div class="pc-total" id="p2-total">—</div>
+          <div class="pc-parc" id="p2-parc"></div>
+        </div>
+      </div>
+
+      <!-- PLANO III -->
+      <div class="pcard p3">
+        <div class="pcard-hd">
+          <div class="pc-eye">Plano III</div>
+          <div class="pc-nome">3 ciclos completos</div>
+          <div class="pc-dur">10 meses · até 10×</div>
+        </div>
+        <div class="pc-desc">
+          <div class="pc-desc-item"><strong>2</strong> clientes ocultos</div>
+          <div class="pc-desc-item"><strong>6</strong> treinamentos</div>
+          <div class="pc-desc-item"><strong>2</strong> benchmarkings</div>
+          <div class="pc-desc-item"><strong>44h</strong> trabalhadas</div>
+        </div>
+        <div class="pc-body">
+          <table class="ptable">
+            <tr><td>Horas trabalhadas</td><td id="p3-h">—</td></tr>
+            <tr><td>Deslocamento</td><td id="p3-desl">—</td></tr>
+            <tr><td>Alimentação</td><td id="p3-alim">—</td></tr>
+            <tr><td>Cliente oculto</td><td id="p3-co">—</td></tr>
+            <tr><td>Treinamentos</td><td id="p3-trei">—</td></tr>
+            <tr class="enc"><td>Imposto (10%)</td><td id="p3-imp">—</td></tr>
+            <tr class="enc"><td>Margem (10%)</td><td id="p3-marg">—</td></tr>
+            <tr class="enc"><td>Comissão (8%)</td><td id="p3-com">—</td></tr>
+          </table>
+          <div class="inc">
+            <div class="inc-item"><span class="inc-dot"></span>2 clientes ocultos anônimos</div>
+            <div class="inc-item"><span class="inc-dot"></span>6 treinamentos (2h cada)</div>
+            <div class="inc-item"><span class="inc-dot"></span>2 benchmarkings guiados</div>
+            <div class="inc-item"><span class="inc-dot"></span>Programa completo</div>
+          </div>
+        </div>
+        <div class="pc-foot">
+          <div class="pc-foot-lbl">Valor total</div>
+          <div class="pc-total" id="p3-total">—</div>
+          <div class="pc-parc" id="p3-parc"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="nota">
+      Valores calculados com base na tabela de precificação Onze em Ponto.
+      <strong>Encargos:</strong> imposto 10% · margem de erro 10% sobre horas · comissão comercial 8% · desconto à vista 5%.
+      <strong>Combustível:</strong> R$ 2,50/km. <strong>Apresentação:</strong> R$ 100 × nº de treinamentos por plano.
+      Proposta formal enviada em até 48h após alinhamento.
+    </div>
+
+  </div>
+</div>
+
+</div>
+
+<script>
+const st = { passagem:'nao', comb:'nao', estac:'nao', hosp:'nao', trofeu:'sim', avista:'nao' };
+
+const PL = {
+  1: { t_h:12,  co_h:6,  vh_np:180, vh_p:170, visitas:6,  ciclos:1, mp:3,  nTrein:2  },
+  2: { t_h:24,  co_h:12, vh_np:150, vh_p:140, visitas:12, ciclos:2, mp:6,  nTrein:4  },
+  3: { t_h:32,  co_h:12, vh_np:150, vh_p:130, visitas:16, ciclos:2, mp:10, nTrein:6  },
+};
+
+function toggleParceiro() {
+  const c = document.getElementById('p-chk');
+  c.checked = !c.checked; calc();
+}
+
+function sel(el, g) {
+  document.querySelectorAll('#'+g+'-g .pill').forEach(p => p.classList.remove('on'));
+  el.classList.add('on'); st[g] = el.dataset.val;
+  document.getElementById('passagem-det').style.display = st.passagem==='sim' ? 'block':'none';
+  document.getElementById('comb-det').style.display     = st.comb==='sim'     ? 'block':'none';
+  document.getElementById('estac-det').style.display    = st.estac==='sim'    ? 'block':'none';
+  document.getElementById('hosp-det').style.display     = st.hosp==='sim'     ? 'block':'none';
+  calc();
+}
+
+function v(id) { return parseFloat(document.getElementById(id).value)||0; }
+function fmt(n){ return 'R$ '+Math.round(n).toLocaleString('pt-BR'); }
+
+function calc() {
+  const parceiro = document.getElementById('p-chk').checked;
+  document.getElementById('p-badge').classList.toggle('on', parceiro);
+
+  const alimPV =
+    (document.getElementById('cafe-chk').checked   ? 30 : 0) +
+    (document.getElementById('almoco-chk').checked ? 50 : 0) +
+    (document.getElementById('janta-chk').checked  ? 50 : 0);
+
+  const coTotal = v('co-ingr') + v('co-alim') + v('co-hosp-n')*v('co-hosp-v') + v('co-extra');
+  const part    = v('part-v');
+  const apostilas = part * 30;
+  const trofeu    = st.trofeu==='sim' ? 200 : 0;
+
+  [1,2,3].forEach(n => {
+    const p  = PL[n];
+    const vh = parceiro ? p.vh_p : p.vh_np;
+
+    const horas = (p.t_h + p.co_h) * vh;
+
+    const pass  = st.passagem==='sim' ? v('pass-v')  * p.ciclos   : 0;
+    const comb  = st.comb==='sim'     ? v('km-v') * 2.50 * p.visitas : 0;
+    const estac = st.estac==='sim'    ? v('estac-v') * p.visitas   : 0;
+    const hospD = st.hosp==='sim'     ? v('hosp-v')  * v('noites-v') * p.ciclos : 0;
+    const desl  = pass + comb + estac + hospD;
+
+    const alim  = alimPV * p.visitas;
+    const apres = 100 * p.nTrein;
+    const trei  = apostilas + apres + trofeu;
+
+    const sub   = horas + desl + alim + coTotal + trei;
+    const imp   = sub * 0.10;
+    const marg  = horas * 0.10;
+    const base  = sub + imp + marg;
+    const com   = base * 0.08;
+    const desc  = st.avista==='sim' ? (base+com)*0.05 : 0;
+    const total = base + com - desc;
+
+    document.getElementById('p'+n+'-h').textContent    = fmt(horas);
+    document.getElementById('p'+n+'-desl').textContent = desl    ? fmt(desl)    : '—';
+    document.getElementById('p'+n+'-alim').textContent = alim    ? fmt(alim)    : '—';
+    document.getElementById('p'+n+'-co').textContent   = coTotal ? fmt(coTotal) : '—';
+    document.getElementById('p'+n+'-trei').textContent = fmt(trei);
+    document.getElementById('p'+n+'-imp').textContent  = fmt(imp);
+    document.getElementById('p'+n+'-marg').textContent = fmt(marg);
+    document.getElementById('p'+n+'-com').textContent  = fmt(com);
+    document.getElementById('p'+n+'-total').textContent = fmt(total);
+    document.getElementById('p'+n+'-parc').textContent  = st.avista==='sim'
+      ? 'À vista · 5% de desconto'
+      : p.mp+'× de '+fmt(total/p.mp);
+  });
+}
+
+calc();
+</script>
+</body>
+</html>
