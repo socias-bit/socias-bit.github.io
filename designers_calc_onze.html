@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora · Designers da Experiência · Onze em Ponto</title>
+<link href="https://fonts.googleapis.com/css2?family=Mulish:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --amarelo:   #FFCA01;
+  --verde:     #97B62D;
+  --vermelho:  #F04848;
+  --cinza-esc: #545454;
+  --cinza-cla: #F2F2F2;
+  --branco:    #FFFFFF;
+  --texto:     #545454;
+  --borda:     #E0E0E0;
+}
+
+body {
+  font-family: 'Mulish', sans-serif;
+  font-size: 13px;
+  background: var(--cinza-cla);
+  color: var(--texto);
+  min-height: 100vh;
+}
+
+/* ── HEADER ─────────────────────────────────── */
+.header {
+  background: var(--cinza-esc);
+  padding: 0;
+  display: flex;
+  align-items: stretch;
+}
+.header-accent {
+  width: 8px;
+  background: var(--amarelo);
+  flex-shrink: 0;
+}
+.header-content {
+  padding: 18px 28px;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.h-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.h-eyebrow {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--amarelo);
+}
+.h-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--branco);
+  line-height: 1.1;
+}
+.h-sub {
+  font-size: 11px;
+  font-weight: 300;
+  color: rgba(255,255,255,.45);
+  margin-top: 1px;
+}
+
+/* SELETOR TIPO DE CLIENTE (header) */
+.tipo-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255,255,255,.07);
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 6px;
+  padding: 7px 12px;
+  flex-shrink: 0;
+}
+.tipo-label {
+  font-size: 10px; font-weight: 800; color: rgba(255,255,255,.45);
+  letter-spacing: .12em; text-transform: uppercase; white-space: nowrap;
+}
+.tipo-pills { display: flex; gap: 4px; }
+.tipo-pill {
+  font-size: 11px; font-weight: 700; padding: 5px 12px;
+  border-radius: 4px; cursor: pointer; user-select: none;
+  background: rgba(255,255,255,.08); color: rgba(255,255,255,.5);
+  border: 1px solid rgba(255,255,255,.1);
+  transition: all .15s;
+  white-space: nowrap;
+}
+.tipo-pill:hover { background: rgba(255,255,255,.14); color: rgba(255,255,255,.8); }
+.tipo-pill.on {
+  background: var(--amarelo);
+  color: var(--cinza-esc);
+  border-color: var(--amarelo);
+}
+
+/* ── LAYOUT ──────────────────────────────────── */
+.main { display: grid; grid-template-columns: 310px 1fr; min-height: calc(100vh - 80px); }
+
+/* ── PAINEL ESQUERDO ─────────────────────────── */
+.left { background: var(--branco); border-right: 1px solid var(--borda); overflow-y: auto; }
+.panel-hd {
+  font-size: 9px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--cinza-esc); padding: 12px 18px; border-bottom: 1px solid var(--borda);
+  background: var(--cinza-cla); position: sticky; top: 0; z-index: 2;
+}
+.left-body { padding: 16px 18px 32px; }
+
+.sec {
+  margin-bottom: 20px;
+  padding-left: 12px;
+  border-left: 4px solid var(--verde);
+}
+.sec.alert { border-left-color: var(--vermelho); }
+.sec-title {
+  font-size: 12px; font-weight: 800; color: var(--cinza-esc); margin-bottom: 8px;
+  display: flex; align-items: center; gap: 7px;
+}
+.sec-num {
+  width: 20px; height: 20px; border-radius: 50%;
+  background: var(--verde); color: var(--branco);
+  font-size: 9px; font-weight: 800;
+  display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+
+.subsec { margin-top: 10px; margin-bottom: 2px; }
+.subsec-label {
+  font-size: 9px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase;
+  color: rgba(84,84,84,.5); margin-bottom: 6px; padding-bottom: 4px;
+  border-bottom: 1px solid var(--borda);
+}
+
+/* Pills */
+.pills { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 4px; }
+.pill {
+  border: 1px solid var(--borda); border-radius: 4px; padding: 5px 11px;
+  font-size: 12px; font-family: 'Mulish', sans-serif; font-weight: 600;
+  cursor: pointer; background: var(--cinza-cla); color: rgba(84,84,84,.7);
+  transition: all .12s; user-select: none;
+}
+.pill:hover { border-color: var(--verde); color: var(--cinza-esc); }
+.pill.on { background: var(--cinza-esc); border-color: var(--cinza-esc); color: var(--amarelo); font-weight: 700; }
+
+/* Input rows */
+.row {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 7px; flex-wrap: wrap;
+}
+.row label { font-size: 11.5px; font-weight: 400; color: rgba(84,84,84,.8); flex: 1; min-width: 120px; }
+.row input[type=number] {
+  width: 76px; padding: 5px 8px;
+  border: 1px solid var(--borda); border-radius: 4px;
+  font-size: 12px; font-family: 'Mulish', sans-serif; font-weight: 600;
+  background: var(--cinza-cla); color: var(--cinza-esc); outline: none;
+  transition: border .12s;
+}
+.row input:focus { border-color: var(--verde); background: white; }
+.row .hint { font-size: 10px; font-weight: 600; color: rgba(84,84,84,.45); white-space: nowrap; }
+
+/* Checkbox */
+.ck-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; cursor: pointer; }
+.ck-row input[type=checkbox] { accent-color: var(--verde); width: 14px; height: 14px; cursor: pointer; flex-shrink: 0; }
+.ck-row label { font-size: 12px; font-weight: 400; color: var(--cinza-esc); cursor: pointer; flex: 1; }
+.ck-row .val { font-size: 11px; font-weight: 700; color: var(--verde); }
+
+/* ── PAINEL DIREITO ──────────────────────────── */
+.right { background: var(--cinza-cla); overflow-y: auto; }
+.right-hd {
+  font-size: 9px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--cinza-esc); padding: 12px 24px; border-bottom: 1px solid var(--borda);
+  background: var(--cinza-cla); position: sticky; top: 0; z-index: 2;
+}
+.right-body { padding: 16px 24px 32px; }
+
+/* Grid de planos — 2 cards no Designers */
+.plans { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 14px; margin-bottom: 20px; max-width: 720px; }
+
+.pcard {
+  background: var(--branco);
+  border: 1px solid var(--borda);
+  border-top: 4px solid var(--verde);
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,.04);
+  transition: box-shadow .2s;
+}
+.pcard:hover { box-shadow: 0 4px 16px rgba(0,0,0,.08); }
+.pcard.best {
+  border-top: 4px solid var(--amarelo);
+  box-shadow: 0 2px 12px rgba(0,0,0,.10);
+}
+
+/* Cabeçalho card */
+.pcard-hd { padding: 14px 16px 12px; background: var(--branco); }
+.pc-eye {
+  font-size: 9px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--verde); margin-bottom: 3px; display: flex; align-items: center; gap: 6px;
+}
+.pcard.best .pc-eye { color: var(--cinza-esc); }
+.pop {
+  font-size: 9px; font-weight: 800; padding: 2px 7px; border-radius: 3px;
+  background: var(--amarelo); color: var(--cinza-esc); letter-spacing: .03em;
+}
+.pc-nome { font-size: 16px; font-weight: 800; color: var(--cinza-esc); line-height: 1.1; }
+.pc-dur  { font-size: 10px; font-weight: 300; color: rgba(84,84,84,.5); margin-top: 3px; }
+
+/* Descrição do plano */
+.pc-desc {
+  background: var(--cinza-cla);
+  border-top: 1px solid var(--borda);
+  border-bottom: 1px solid var(--borda);
+  padding: 8px 16px;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 3px 8px;
+}
+.pc-desc-item { font-size: 10px; font-weight: 400; color: rgba(84,84,84,.65); }
+.pc-desc-item strong { color: var(--cinza-esc); font-weight: 700; }
+
+/* Body */
+.pc-body { padding: 12px 16px 10px; }
+.ptable { width: 100%; border-collapse: collapse; font-size: 11.5px; }
+.ptable tr td { padding: 4px 0; border-bottom: 1px solid var(--cinza-cla); }
+.ptable tr:last-child td { border-bottom: none; }
+.ptable td:first-child { font-weight: 400; color: rgba(84,84,84,.7); }
+.ptable td:last-child { font-weight: 700; color: var(--cinza-esc); text-align: right; }
+.ptable tr.enc td { font-size: 10.5px; color: rgba(84,84,84,.5); }
+.ptable tr.enc td:last-child { font-weight: 600; color: rgba(84,84,84,.6); }
+
+/* Itens inclusos */
+.inc { margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--cinza-cla); }
+.inc-item { display: flex; align-items: center; gap: 6px; font-size: 10.5px; font-weight: 400; color: rgba(84,84,84,.65); padding: 2px 0; }
+.inc-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--verde); flex-shrink: 0; }
+.pcard.best .inc-dot { background: var(--amarelo); }
+
+/* Footer card */
+.pc-foot {
+  background: var(--cinza-esc);
+  padding: 12px 16px;
+  margin-top: 2px;
+}
+.pc-foot-lbl {
+  font-size: 9px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase;
+  color: rgba(255,255,255,.4); margin-bottom: 3px;
+}
+.pc-total { font-size: 20px; font-weight: 800; color: var(--amarelo); }
+.pc-parc  { font-size: 11px; font-weight: 300; color: rgba(255,255,255,.5); margin-top: 2px; }
+
+/* Nota rodapé */
+.nota {
+  font-size: 11px; font-weight: 300; color: rgba(84,84,84,.6);
+  border-top: 1px solid var(--borda); padding-top: 14px;
+  line-height: 1.6;
+  max-width: 720px;
+}
+.nota strong { font-weight: 700; color: var(--cinza-esc); }
+
+@media (max-width: 860px) {
+  .main { grid-template-columns: 1fr; }
+  .left { border-right: none; border-bottom: 1px solid var(--borda); }
+  .plans { grid-template-columns: 1fr; }
+  .header-content { flex-direction: column; align-items: flex-start; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-accent"></div>
+  <div class="header-content">
+    <div class="h-brand">
+      <div class="h-eyebrow">Onze em Ponto · Documento Interno</div>
+      <div class="h-title">Calculadora de Orçamento</div>
+      <div class="h-sub">Designers da Experiência · 3 tipos de cliente · Presencial vs Online</div>
+    </div>
+    <div class="tipo-wrap">
+      <span class="tipo-label">Cliente</span>
+      <div class="tipo-pills" id="tipo-g">
+        <div class="tipo-pill on" data-val="normal"   onclick="selTipo(this)">Novo Cliente</div>
+        <div class="tipo-pill"    data-val="parceiro" onclick="selTipo(this)">Parceiro</div>
+        <div class="tipo-pill"    data-val="encantar" onclick="selTipo(this)">Cliente Onze</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+
+<!-- ═══ ESQUERDA ══════════════════════════════════════════════ -->
+<div class="left">
+  <div class="panel-hd">Configurações do orçamento</div>
+  <div class="left-body">
+
+    <!-- 1. DESLOCAMENTO (afeta só o card Presencial) -->
+    <div class="sec">
+      <div class="sec-title"><span class="sec-num">1</span>Deslocamento <span style="font-size:10px;font-weight:300;color:rgba(84,84,84,.5)">(presencial)</span></div>
+
+      <div class="subsec">
+        <div class="subsec-label">Passagem aérea</div>
+        <div class="pills" id="passagem-g">
+          <div class="pill on" data-val="nao" onclick="sel(this,'passagem')">Não tem</div>
+          <div class="pill" data-val="sim" onclick="sel(this,'passagem')">Sim, tem</div>
+        </div>
+        <div id="passagem-det" style="display:none">
+          <div class="row">
+            <label>Valor da passagem (ida + volta)</label>
+            <input type="number" id="pass-v" value="600" min="0" step="50" oninput="calc()">
+            <span class="hint">R$</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsec">
+        <div class="subsec-label">Combustível</div>
+        <div class="pills" id="comb-g">
+          <div class="pill on" data-val="nao" onclick="sel(this,'comb')">Não tem</div>
+          <div class="pill" data-val="sim" onclick="sel(this,'comb')">Sim, tem</div>
+        </div>
+        <div id="comb-det" style="display:none">
+          <div class="row">
+            <label>Quilometragem por evento (ida + volta)</label>
+            <input type="number" id="km-v" value="100" min="0" step="10" oninput="calc()">
+            <span class="hint">km × R$ 2,50</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsec">
+        <div class="subsec-label">Estacionamento</div>
+        <div class="pills" id="estac-g">
+          <div class="pill on" data-val="nao" onclick="sel(this,'estac')">Não tem</div>
+          <div class="pill" data-val="sim" onclick="sel(this,'estac')">Sim, tem</div>
+        </div>
+        <div id="estac-det" style="display:none">
+          <div class="row">
+            <label>Valor por evento</label>
+            <input type="number" id="estac-v" value="30" min="0" step="5" oninput="calc()">
+            <span class="hint">R$ / evento</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsec">
+        <div class="subsec-label">Hospedagem (deslocamento)</div>
+        <div class="pills" id="hosp-g">
+          <div class="pill on" data-val="nao" onclick="sel(this,'hosp')">Não tem</div>
+          <div class="pill" data-val="sim" onclick="sel(this,'hosp')">Sim, tem</div>
+        </div>
+        <div id="hosp-det" style="display:none">
+          <div class="row">
+            <label>Valor da diária</label>
+            <input type="number" id="hosp-v" value="300" min="0" step="50" oninput="calc()">
+            <span class="hint">R$ / noite</span>
+          </div>
+          <div class="row">
+            <label>Número de noites</label>
+            <input type="number" id="noites-v" value="1" min="0" oninput="calc()">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. ALIMENTAÇÃO -->
+    <div class="sec">
+      <div class="sec-title"><span class="sec-num">2</span>Alimentação <span style="font-size:10px;font-weight:300;color:rgba(84,84,84,.5)">(por evento presencial)</span></div>
+      <div class="ck-row">
+        <input type="checkbox" id="cafe-chk" onchange="calc()">
+        <label for="cafe-chk">Café da manhã</label>
+        <span class="val">R$ 30</span>
+      </div>
+      <div class="ck-row">
+        <input type="checkbox" id="almoco-chk" onchange="calc()">
+        <label for="almoco-chk">Almoço</label>
+        <span class="val">R$ 50</span>
+      </div>
+      <div class="ck-row">
+        <input type="checkbox" id="janta-chk" onchange="calc()">
+        <label for="janta-chk">Janta</label>
+        <span class="val">R$ 50</span>
+      </div>
+    </div>
+
+    <!-- 3. CUSTOMIZAÇÃO E EXTRAS -->
+    <div class="sec">
+      <div class="sec-title"><span class="sec-num">3</span>Customização e extras</div>
+
+      <div class="subsec">
+        <div class="subsec-label">Horas extras de análise</div>
+        <div class="pills" id="custom-g">
+          <div class="pill on" data-val="padrao" onclick="sel(this,'custom')">Padrão</div>
+          <div class="pill" data-val="extra" onclick="sel(this,'custom')">Com extras</div>
+        </div>
+        <div id="custom-det" style="display:none">
+          <div class="row">
+            <label>Horas extras</label>
+            <input type="number" id="custom-h" value="4" min="0" step="1" oninput="calc()">
+            <span class="hint">h adicionais</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsec">
+        <div class="subsec-label">Bônus Palestra <span style="font-weight:400;color:rgba(84,84,84,.45);text-transform:none;letter-spacing:0">(visão Onze para o time)</span></div>
+        <div class="pills" id="palestra-g">
+          <div class="pill on" data-val="nao" onclick="sel(this,'palestra')">Não tem</div>
+          <div class="pill" data-val="sim" onclick="sel(this,'palestra')">Sim, tem</div>
+        </div>
+        <div id="palestra-det" style="display:none">
+          <div class="row">
+            <label>Duração da palestra</label>
+            <input type="number" id="palestra-h" value="2" min="0" step="0.5" oninput="calc()">
+            <span class="hint">horas</span>
+          </div>
+          <div class="row">
+            <label>Valor por hora de palestra</label>
+            <input type="number" id="palestra-vh" value="200" min="0" step="50" oninput="calc()">
+            <span class="hint">R$ / h</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. PAGAMENTO -->
+    <div class="sec">
+      <div class="sec-title"><span class="sec-num">4</span>Pagamento</div>
+      <div class="pills" id="avista-g">
+        <div class="pill" data-val="sim" onclick="sel(this,'avista')">À vista — 5% desconto</div>
+        <div class="pill on" data-val="nao" onclick="sel(this,'avista')">Parcelado · 2×</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══ DIREITA ════════════════════════════════════════════════ -->
+<div class="right">
+  <div class="right-hd">Comparativo · Presencial vs Online · valores calculados automaticamente</div>
+  <div class="right-body">
+
+    <div class="plans">
+
+      <!-- MODALIDADE ONLINE -->
+      <div class="pcard">
+        <div class="pcard-hd">
+          <div class="pc-eye">Modalidade A</div>
+          <div class="pc-nome">Online</div>
+          <div class="pc-dur">Workshop + entrega remotos · 2 a 3 semanas</div>
+        </div>
+        <div class="pc-desc">
+          <div class="pc-desc-item"><strong>1</strong> workshop online</div>
+          <div class="pc-desc-item"><strong>1</strong> entrega online</div>
+          <div class="pc-desc-item"><strong>4</strong> pilares analisados</div>
+          <div class="pc-desc-item"><strong>6h</strong> trabalhadas</div>
+        </div>
+        <div class="pc-body">
+          <table class="ptable">
+            <tr><td>Horas trabalhadas</td><td id="po-h">—</td></tr>
+            <tr><td>Deslocamento</td><td id="po-desl">—</td></tr>
+            <tr><td>Alimentação</td><td id="po-alim">—</td></tr>
+            <tr><td>Customização extra</td><td id="po-cust">—</td></tr>
+            <tr><td>Bônus palestra</td><td id="po-pal">—</td></tr>
+            <tr class="enc"><td>Imposto (10%)</td><td id="po-imp">—</td></tr>
+            <tr class="enc"><td>Margem (10%)</td><td id="po-marg">—</td></tr>
+            <tr class="enc"><td>Comissão (8%)</td><td id="po-com">—</td></tr>
+          </table>
+          <div class="inc">
+            <div class="inc-item"><span class="inc-dot"></span>Workshop online (90 min)</div>
+            <div class="inc-item"><span class="inc-dot"></span>Análise interna pela Onze</div>
+            <div class="inc-item"><span class="inc-dot"></span>Apresentação online (60 min)</div>
+            <div class="inc-item"><span class="inc-dot"></span>Arquivo do Guia de Decisão</div>
+          </div>
+        </div>
+        <div class="pc-foot">
+          <div class="pc-foot-lbl">Valor total</div>
+          <div class="pc-total" id="po-total">—</div>
+          <div class="pc-parc" id="po-parc"></div>
+        </div>
+      </div>
+
+      <!-- MODALIDADE PRESENCIAL -->
+      <div class="pcard best">
+        <div class="pcard-hd">
+          <div class="pc-eye">Modalidade B <span class="pop">+ popular</span></div>
+          <div class="pc-nome">Presencial</div>
+          <div class="pc-dur">Workshop + entrega presenciais · 2 a 3 semanas</div>
+        </div>
+        <div class="pc-desc">
+          <div class="pc-desc-item"><strong>1</strong> workshop presencial</div>
+          <div class="pc-desc-item"><strong>1</strong> entrega presencial</div>
+          <div class="pc-desc-item"><strong>4</strong> pilares analisados</div>
+          <div class="pc-desc-item"><strong>6h</strong> trabalhadas</div>
+        </div>
+        <div class="pc-body">
+          <table class="ptable">
+            <tr><td>Horas trabalhadas</td><td id="pp-h">—</td></tr>
+            <tr><td>Deslocamento</td><td id="pp-desl">—</td></tr>
+            <tr><td>Alimentação</td><td id="pp-alim">—</td></tr>
+            <tr><td>Customização extra</td><td id="pp-cust">—</td></tr>
+            <tr><td>Bônus palestra</td><td id="pp-pal">—</td></tr>
+            <tr class="enc"><td>Imposto (10%)</td><td id="pp-imp">—</td></tr>
+            <tr class="enc"><td>Margem (10%)</td><td id="pp-marg">—</td></tr>
+            <tr class="enc"><td>Comissão (8%)</td><td id="pp-com">—</td></tr>
+          </table>
+          <div class="inc">
+            <div class="inc-item"><span class="inc-dot"></span>Workshop presencial (90 min)</div>
+            <div class="inc-item"><span class="inc-dot"></span>Jogo de tabuleiro + materiais</div>
+            <div class="inc-item"><span class="inc-dot"></span>Análise interna pela Onze</div>
+            <div class="inc-item"><span class="inc-dot"></span>Apresentação presencial (60 min)</div>
+            <div class="inc-item"><span class="inc-dot"></span>Arquivo do Guia de Decisão</div>
+          </div>
+        </div>
+        <div class="pc-foot">
+          <div class="pc-foot-lbl">Valor total</div>
+          <div class="pc-total" id="pp-total">—</div>
+          <div class="pc-parc" id="pp-parc"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="nota">
+      Valores calculados com base na tabela de precificação Onze em Ponto.
+      <strong>Tipos de cliente:</strong> Novo Cliente R$ 180/h · Parceiro R$ 150/h · Cliente Onze R$ 997 fixo (aluno do produto Encantar).
+      <strong>Encargos:</strong> imposto 10% · margem de erro 10% sobre horas · comissão comercial 8% · desconto à vista 5%.
+      <strong>Combustível:</strong> R$ 2,50/km. <strong>Modalidade online:</strong> não computa deslocamento, alimentação nem material físico.
+      <strong>Horas:</strong> 6h em ambas modalidades (2h workshop + 2h análise interna + 2h apresentação).
+      <strong>Bônus Palestra:</strong> add-on opcional sobre visão Onze para o time do cliente.
+      Faixa de referência do produto: R$ 900 a R$ 2.000. Proposta formal enviada em até 48h após alinhamento.
+    </div>
+
+  </div>
+</div>
+
+</div>
+
+<script>
+const st = {
+  passagem:'nao', comb:'nao', estac:'nao', hosp:'nao',
+  custom:'padrao', palestra:'nao', avista:'nao',
+  tipo: 'normal'  // normal | parceiro | encantar
+};
+
+// po = modalidade Online · pp = modalidade Presencial
+// 6h em ambas: 2h workshop + 2h interno + 2h apresentação
+const PL = {
+  po: { horas: 6, ev: 0, mp: 2 },   // 0 eventos presenciais
+  pp: { horas: 6, ev: 2, mp: 2 },   // 2 eventos (workshop + apresentação)
+};
+
+// Valor fixo do Encantar (online, base) — promo de aluno
+const ENCANTAR_BASE = 997;
+
+function selTipo(el) {
+  document.querySelectorAll('#tipo-g .tipo-pill').forEach(p => p.classList.remove('on'));
+  el.classList.add('on');
+  st.tipo = el.dataset.val;
+  calc();
+}
+
+function sel(el, g) {
+  document.querySelectorAll('#'+g+'-g .pill').forEach(p => p.classList.remove('on'));
+  el.classList.add('on'); st[g] = el.dataset.val;
+  const passEl = document.getElementById('passagem-det'); if(passEl) passEl.style.display = st.passagem==='sim' ? 'block':'none';
+  const combEl = document.getElementById('comb-det');     if(combEl) combEl.style.display = st.comb==='sim'     ? 'block':'none';
+  const estEl  = document.getElementById('estac-det');    if(estEl)  estEl.style.display  = st.estac==='sim'    ? 'block':'none';
+  const hospEl = document.getElementById('hosp-det');     if(hospEl) hospEl.style.display = st.hosp==='sim'     ? 'block':'none';
+  const custEl = document.getElementById('custom-det');   if(custEl) custEl.style.display = st.custom==='extra' ? 'block':'none';
+  const palEl  = document.getElementById('palestra-det'); if(palEl)  palEl.style.display  = st.palestra==='sim' ? 'block':'none';
+  calc();
+}
+
+function v(id) { return parseFloat(document.getElementById(id).value)||0; }
+function fmt(n){ return 'R$ '+Math.round(n).toLocaleString('pt-BR'); }
+
+function calc() {
+  // valor/hora base conforme tipo (parceiro tem desconto; encantar usa lógica fixa)
+  const vh = st.tipo === 'parceiro' ? 150 : 180;
+
+  const alimPV =
+    (document.getElementById('cafe-chk').checked   ? 30 : 0) +
+    (document.getElementById('almoco-chk').checked ? 50 : 0) +
+    (document.getElementById('janta-chk').checked  ? 50 : 0);
+
+  const custH   = st.custom==='extra'  ? v('custom-h')   : 0;
+  const palH    = st.palestra==='sim'  ? v('palestra-h') : 0;
+  const palVh   = st.palestra==='sim'  ? v('palestra-vh'): 0;
+  const palVal  = palH * palVh;
+
+  // Iterar nas duas modalidades
+  [['po', false], ['pp', true]].forEach(([key, presencial]) => {
+    const p  = PL[key];
+
+    // ─── horas trabalhadas ───
+    const horasTotal = p.horas + custH;
+    const horas      = horasTotal * vh;
+
+    // ─── deslocamento (só presencial) ───
+    const pass  = (presencial && st.passagem==='sim') ? v('pass-v')                  : 0;
+    const comb  = (presencial && st.comb==='sim')     ? v('km-v') * 2.50 * p.ev      : 0;
+    const estac = (presencial && st.estac==='sim')    ? v('estac-v')           * p.ev: 0;
+    const hospD = (presencial && st.hosp==='sim')     ? v('hosp-v') * v('noites-v')  : 0;
+    const desl  = pass + comb + estac + hospD;
+
+    // ─── alimentação (só presencial) ───
+    const alim  = presencial ? alimPV * p.ev : 0;
+
+    // ─── total ───
+    let total, imp, marg, com, base;
+
+    if (st.tipo === 'encantar') {
+      // ENCANTAR: R$ 997 é valor FINAL fixo (preço de aluno, já fechado).
+      // Extras (palestra, deslocamento, alimentação, horas custom) somam por cima
+      // e passam pela mesma régua de encargos da fórmula normal.
+      const subExtras = desl + alim + (custH * vh) + palVal;
+      imp  = subExtras * 0.10;
+      marg = (custH * vh) * 0.10;
+      base = subExtras + imp + marg;
+      com  = base * 0.08;
+      const desc = (st.avista==='sim' && subExtras > 0) ? (base+com) * 0.05 : 0;
+      total = ENCANTAR_BASE + base + com - desc;
+    } else {
+      // NORMAL e PARCEIRO: fórmula completa
+      const sub  = horas + desl + alim + palVal;
+      imp  = sub * 0.10;
+      marg = horas * 0.10;
+      base = sub + imp + marg;
+      com  = base * 0.08;
+      const desc = st.avista==='sim' ? (base+com) * 0.05 : 0;
+      total = base + com - desc;
+    }
+
+    // ─── render ───
+    document.getElementById(key+'-h').textContent    = fmt(st.tipo==='encantar' ? ENCANTAR_BASE : horas);
+    document.getElementById(key+'-desl').textContent = desl    ? fmt(desl)    : '—';
+    document.getElementById(key+'-alim').textContent = alim    ? fmt(alim)    : '—';
+    document.getElementById(key+'-cust').textContent = custH   ? fmt(custH*vh) : '—';
+    document.getElementById(key+'-pal').textContent  = palVal  ? fmt(palVal)  : '—';
+    document.getElementById(key+'-imp').textContent  = fmt(imp);
+    document.getElementById(key+'-marg').textContent = fmt(marg);
+    document.getElementById(key+'-com').textContent  = fmt(com);
+    document.getElementById(key+'-total').textContent = fmt(total);
+    document.getElementById(key+'-parc').textContent  = st.avista==='sim'
+      ? 'À vista · 5% de desconto'
+      : p.mp+'× de '+fmt(total/p.mp);
+  });
+}
+
+calc();
+</script>
+</body>
+</html>
